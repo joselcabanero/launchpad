@@ -12,9 +12,10 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Skeleton } from '@/components/ui/skeleton'
-import { ArrowLeft, Plus, Users, Calendar, Layers, ShieldCheck, Download } from 'lucide-react'
+import { ArrowLeft, Users, Calendar, Layers, ShieldCheck } from 'lucide-react'
 import { format } from 'date-fns'
 import { StatsRow } from '@/components/dashboard/stats-row'
+import { cn } from '@/lib/utils'
 
 export default function ProgramDetailPage() {
     const { id } = useParams()
@@ -29,23 +30,31 @@ export default function ProgramDetailPage() {
         enabled: !!id,
     })
 
-    // Calculate avg score for this program
     const { data: allScores } = useQuery({
         queryKey: ['company_avg_scores_program', id],
-        queryFn: () => fetchCompanyAvgScores('', 2), // Global then filter for now or add helper
+        queryFn: () => fetchCompanyAvgScores('', 2),
     })
 
     const isLoading = programLoading || companiesLoading || tasksLoading || cohortsLoading
 
     if (isLoading) {
-        return <div className="space-y-6"><Skeleton className="h-20 w-1/3 bg-surface" /> <Skeleton className="h-[600px] w-full bg-surface" /></div>
+        return (
+            <div className="space-y-6 animate-fade-in">
+                <Skeleton className="h-20 w-1/3 bg-surface rounded-lg" />
+                <Skeleton className="h-[600px] w-full bg-surface rounded-lg" />
+            </div>
+        )
     }
 
     if (!program) {
-        return <div className="text-center p-12">Program not found.</div>
+        return (
+            <div className="flex flex-col items-center justify-center py-24 text-center">
+                <Layers className="w-12 h-12 text-text-muted/20 mb-4" />
+                <p className="text-[15px] font-semibold text-text-muted">Program not found.</p>
+            </div>
+        )
     }
 
-    // Filter scores for companies in this program
     const programCompanyIds = companies?.map(c => c.id) || []
     const programScores = allScores?.filter(s => programCompanyIds.includes(s.company_id)) || []
     const avgScore = programScores.length > 0
@@ -53,88 +62,94 @@ export default function ProgramDetailPage() {
         : 0
 
     return (
-        <div className="space-y-10 font-inter pb-20 max-w-7xl mx-auto">
-            <div className="flex items-center gap-4">
+        <div className="space-y-8 font-inter pb-20 max-w-7xl mx-auto animate-fade-in">
+            {/* Header */}
+            <div className="flex items-start gap-4">
                 <Button
                     variant="ghost"
                     size="icon"
                     onClick={() => router.back()}
-                    className="hover:bg-surface-secondary text-text-muted transition-colors rounded-full"
+                    className="hover:bg-surface-secondary text-text-muted transition-colors rounded-full shrink-0 mt-1"
                 >
-                    <ArrowLeft className="w-5 h-5" />
+                    <ArrowLeft className="w-4 h-4" />
                 </Button>
-                <div className="flex-1">
-                    <div className="flex items-center gap-3">
+                <div className="flex-1 min-w-0">
+                    <div className="flex flex-wrap items-center gap-2.5">
                         <h1 className="text-2xl font-bold text-text-primary tracking-tight">{program.name}</h1>
-                        <Badge className="bg-accent-primary px-3 py-1 font-semibold uppercase tracking-wider text-[10px]">
+                        <Badge className="bg-accent-primary/10 text-accent-primary border border-accent-primary/20 text-[10px] px-2.5 py-0.5 font-bold uppercase tracking-wider rounded-full">
                             {program.startup_stage}
                         </Badge>
                     </div>
-                    <div className="flex flex-wrap items-center gap-4 mt-2">
-                        <div className="flex items-center gap-1.5 text-text-muted text-sm font-medium uppercase tracking-wider text-[11px]">
-                            <Calendar className="w-3.5 h-3.5" /> Duration: {program.duration.value} {program.duration.type}
-                        </div>
-                        <span className="text-text-muted/30">|</span>
-                        <div className="flex items-center gap-1.5 text-text-muted text-sm font-medium uppercase tracking-wider text-[11px]">
-                            <ShieldCheck className="w-3.5 h-3.5" /> Partner: {program.partnerships.join(', ')}
-                        </div>
+                    <div className="flex flex-wrap items-center gap-3 mt-1.5">
+                        <span className="flex items-center gap-1 text-[11px] text-text-muted font-medium">
+                            <Calendar className="w-3 h-3" /> {program.duration.value} {program.duration.type}
+                        </span>
+                        <span className="text-text-muted/30">·</span>
+                        <span className="flex items-center gap-1 text-[11px] text-text-muted font-medium">
+                            <ShieldCheck className="w-3 h-3" /> {program.partnerships.join(', ')}
+                        </span>
                     </div>
                 </div>
-                <Button className="bg-accent-primary text-text-inverse hover:brightness-90 transition-all font-semibold">
+                <Button className="h-9 bg-accent-primary text-white hover:brightness-90 transition-all font-semibold text-[13px] shrink-0">
                     Manage Program
                 </Button>
             </div>
 
             <StatsRow
                 totalCompanies={companies?.length || 0}
-                activePrograms={cohorts?.length || 0} // Using cohorts as count here for program detail
+                activePrograms={cohorts?.length || 0}
                 avgScore={avgScore}
                 openTasks={tasks?.filter(t => t.status !== 'Closed').length || 0}
             />
 
-            <div className="space-y-6 pt-6">
-                <div className="flex items-center justify-between border-b border-border pb-2">
-                    <h2 className="text-xl font-bold text-text-primary tracking-tight">Cohorts</h2>
-                    <Button variant="ghost" size="sm" className="text-accent-primary hover:text-accent-primary/80 font-bold uppercase tracking-wider text-[11px]">
-                        Add Cohort
+            {/* Cohorts */}
+            <div className="space-y-5">
+                <div className="section-divider">
+                    <h2 className="section-title">Cohorts</h2>
+                    <Button variant="ghost" size="sm" className="text-accent-primary hover:text-accent-primary/80 font-bold uppercase tracking-wider text-[11px] h-8">
+                        + Add Cohort
                     </Button>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                     {cohorts?.map(cohort => {
                         const cohortCompanies = companies?.filter(c => c.cohort_id === cohort.id) || []
                         return (
-                            <Card key={cohort.id} className="bg-surface border-border shadow-sm group hover:border-accent-primary/40 transition-all">
-                                <CardHeader className="pb-4">
-                                    <CardTitle className="text-lg font-bold text-text-primary group-hover:text-accent-primary transition-colors">{cohort.name}</CardTitle>
-                                    <CardDescription className="text-text-muted text-[12px] h-10 overflow-hidden line-clamp-2">
-                                        {cohort.description || "No description provided."}
+                            <Card key={cohort.id} className="bg-surface border-border shadow-sm group hover:border-accent-primary/40 hover:shadow-md transition-all duration-200">
+                                <CardHeader className="pb-3 px-5 pt-5">
+                                    <CardTitle className="text-[14px] font-bold text-text-primary group-hover:text-accent-primary transition-colors">{cohort.name}</CardTitle>
+                                    <CardDescription className="text-text-muted text-[12px] line-clamp-2 mt-1">
+                                        {cohort.description || 'No description provided.'}
                                     </CardDescription>
                                 </CardHeader>
-                                <CardContent className="space-y-4 pt-2">
+                                <CardContent className="px-5 pb-5 space-y-4">
                                     <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-2">
-                                            <Users className="w-4 h-4 text-text-muted/60" />
-                                            <span className="text-[14px] font-bold text-text-primary">{cohortCompanies.length}</span>
-                                            <span className="text-[11px] text-text-muted uppercase font-medium">Companies</span>
+                                        <div className="flex items-center gap-1.5">
+                                            <Users className="w-3.5 h-3.5 text-text-muted/50" />
+                                            <span className="text-[15px] font-bold text-text-primary tabular-nums">{cohortCompanies.length}</span>
+                                            <span className="text-[11px] text-text-muted uppercase font-semibold">companies</span>
                                         </div>
-                                        <div className="flex items-center gap-2">
-                                            <Calendar className="w-4 h-4 text-text-muted/60" />
-                                            <span className="text-[13px] font-medium text-text-primary">
+                                        <div className="flex items-center gap-1.5">
+                                            <Calendar className="w-3.5 h-3.5 text-text-muted/50" />
+                                            <span className="text-[12px] font-semibold text-text-muted">
                                                 {format(cohort.start_date.toDate(), 'MMM yyyy')}
                                             </span>
                                         </div>
                                     </div>
-                                    <div className="h-1.5 w-full bg-border rounded-full overflow-hidden flex">
-                                        <div className="h-full bg-accent-primary" style={{ width: '40%' }} />
-                                        <div className="h-full bg-accent-secondary" style={{ width: '30%' }} />
-                                        <div className="h-full bg-accent-danger" style={{ width: '20%' }} />
-                                        <div className="h-full bg-accent-deep" style={{ width: '10%' }} />
-                                    </div>
-                                    <div className="flex justify-between text-[9px] text-text-muted font-bold uppercase tracking-widest pt-1">
-                                        <span>Applied</span>
-                                        <span>Review</span>
-                                        <span>Selected</span>
+
+                                    {/* Stage distribution bar */}
+                                    <div className="space-y-1.5">
+                                        <div className="h-1.5 w-full bg-border rounded-full overflow-hidden flex">
+                                            <div className="h-full bg-accent-primary transition-all" style={{ width: '40%' }} />
+                                            <div className="h-full bg-accent-secondary transition-all" style={{ width: '30%' }} />
+                                            <div className="h-full bg-accent-danger transition-all" style={{ width: '20%' }} />
+                                            <div className="h-full bg-accent-deep transition-all" style={{ width: '10%' }} />
+                                        </div>
+                                        <div className="flex justify-between text-[9px] text-text-muted/50 font-bold uppercase tracking-widest">
+                                            <span>Applied</span>
+                                            <span>Review</span>
+                                            <span>Selected</span>
+                                        </div>
                                     </div>
                                 </CardContent>
                             </Card>
@@ -143,9 +158,13 @@ export default function ProgramDetailPage() {
                 </div>
             </div>
 
-            <div className="space-y-6 pt-10">
-                <div className="flex items-center justify-between border-b border-border pb-2">
-                    <h2 className="text-xl font-bold text-text-primary tracking-tight">Active Companies</h2>
+            {/* Companies */}
+            <div className="space-y-5">
+                <div className="section-divider">
+                    <h2 className="section-title">Active Companies</h2>
+                    <Badge className="bg-surface-secondary text-text-muted border border-border text-[11px] font-semibold px-2.5 py-0.5">
+                        {companies?.length || 0}
+                    </Badge>
                 </div>
                 <CompaniesTable
                     companies={companies || []}

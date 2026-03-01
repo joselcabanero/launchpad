@@ -17,9 +17,9 @@
   --text-muted: #6B5C4E;
   --text-inverse: #FFFFFF;
 
-  --sidebar-bg: #1E1E1E;
+  --sidebar-bg: #1A1A1A;
   --sidebar-active: #FFA103;
-  --sidebar-hover: #2A2A2A;
+  --sidebar-hover: #252525;
   --sidebar-text: #F5EACE;
   --sidebar-text-muted: #8A7A6A;
 
@@ -35,18 +35,18 @@
 }
 
 .dark {
-  --background: #1E1E1E;
-  --surface: #2A2A2A;
-  --surface-secondary: #3A3A3A;
-  --border: #4A4A4A;
+  --background: #1A1A1A;
+  --surface: #242424;
+  --surface-secondary: #2E2E2E;
+  --border: #3A3A3A;
 
   --text-primary: #F5EACE;
   --text-muted: #8A7A6A;
   --text-inverse: #1E1E1E;
 
-  --sidebar-bg: #131313;
+  --sidebar-bg: #111111;
   --sidebar-active: #FFA103;
-  --sidebar-hover: #242424;
+  --sidebar-hover: #1E1E1E;
   --sidebar-text: #F5EACE;
   --sidebar-text-muted: #6B5C4E;
 }
@@ -55,6 +55,8 @@
   body {
     @apply bg-background text-text-primary;
     font-family: 'Inter', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   .tabular-nums {
@@ -91,5 +93,71 @@
 
   .btn-primary {
     @apply bg-accent-primary text-text-inverse hover:brightness-90 transition-all font-medium;
+  }
+
+  .page-title {
+    @apply text-2xl font-bold text-text-primary tracking-tight;
+  }
+
+  .page-subtitle {
+    @apply text-sm text-text-muted mt-1;
+  }
+
+  .section-divider {
+    @apply flex items-center justify-between border-b border-border pb-3;
+  }
+
+  .section-title {
+    @apply text-lg font-semibold text-text-primary tracking-tight;
+  }
+
+  .stat-icon-orange {
+    @apply p-2.5 bg-accent-primary/10 rounded-lg;
+  }
+
+  .stat-icon-red {
+    @apply p-2.5 bg-accent-secondary/10 rounded-lg;
+  }
+
+  .stat-icon-deep {
+    @apply p-2.5 bg-accent-deep/10 rounded-lg;
+  }
+
+  .stat-icon-danger {
+    @apply p-2.5 bg-accent-danger/10 rounded-lg;
+  }
+}
+
+@layer utilities {
+  .animate-fade-in {
+    animation: fadeIn 0.25s ease-out both;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.3s ease-out both;
+  }
+
+  .animate-slide-up-delayed {
+    animation: slideUp 0.3s ease-out 0.1s both;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }

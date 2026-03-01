@@ -7,6 +7,7 @@ import { useQuery } from '@tanstack/react-query'
 import { fetchCohorts, fetchCompanyAvgScores } from '@/lib/firestore'
 import { CompaniesTable } from '@/components/companies/companies-table'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Badge } from '@/components/ui/badge'
 
 export default function CompaniesPage() {
     const { data: programs, isLoading: programsLoading } = usePrograms()
@@ -19,33 +20,33 @@ export default function CompaniesPage() {
 
     const { data: scores, isLoading: scoresLoading } = useQuery({
         queryKey: ['company_avg_scores_all'],
-        queryFn: () => fetchCompanyAvgScores('', 2) // Round 2 is the main one for evaluation
+        queryFn: () => fetchCompanyAvgScores('', 2)
     })
 
     const isLoading = programsLoading || companiesLoading || cohortsLoading || scoresLoading
 
     if (isLoading) {
         return (
-            <div className="space-y-6">
-                <div className="flex justify-between items-center mb-10">
-                    <Skeleton className="h-10 w-64 bg-surface" />
-                    <Skeleton className="h-10 w-32 bg-surface" />
+            <div className="space-y-6 animate-fade-in">
+                <div className="flex justify-between items-center">
+                    <Skeleton className="h-8 w-48 bg-surface" />
+                    <Skeleton className="h-7 w-20 bg-surface rounded-full" />
                 </div>
-                <Skeleton className="h-[600px] w-full bg-surface" />
+                <Skeleton className="h-[600px] w-full bg-surface rounded-lg" />
             </div>
         )
     }
 
     return (
-        <div className="space-y-6 font-inter pb-12">
+        <div className="space-y-6 font-inter pb-12 animate-fade-in">
             <div className="flex items-center justify-between">
                 <div>
-                    <h1 className="text-2xl font-semibold text-text-primary tracking-tight">Companies</h1>
-                    <p className="text-sm text-text-muted mt-1">Manage and track all companies across all programs and cohorts.</p>
+                    <h1 className="page-title">Companies</h1>
+                    <p className="page-subtitle">Manage and track all companies across all programs and cohorts.</p>
                 </div>
-                <span className="text-sm text-text-muted font-medium bg-surface-secondary px-3 py-1 rounded-md tabular-nums">
-                    Total: {companies?.length || 0}
-                </span>
+                <Badge className="bg-surface-secondary text-text-muted border border-border text-[12px] font-semibold tabular-nums px-3 py-1">
+                    {companies?.length || 0} total
+                </Badge>
             </div>
 
             <CompaniesTable
