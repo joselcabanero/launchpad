@@ -26,7 +26,6 @@ export default function PipelinePage() {
         enabled: true,
     })
 
-    // Set initial selected values when data loads
     useEffect(() => {
         if (programs?.length && !selectedProgramId) {
             setTimeout(() => setSelectedProgramId(programs[0].id), 0)
@@ -39,43 +38,41 @@ export default function PipelinePage() {
         }
     }, [cohorts, selectedCohortId])
 
-    // Get scores for the Kanban cards
     const { data: scores } = useQuery({
         queryKey: ['company_avg_scores_pipeline', selectedCohortId],
         queryFn: () => fetchCompanyAvgScores(selectedCohortId, 2),
         enabled: !!selectedCohortId,
     })
 
-    // Real-time hook for companies and stages
     const { stages, companies, loading: pipelineLoading } = usePipeline(selectedCohortId)
 
     const isLoading = programsLoading || cohortsLoading || (pipelineLoading && !!selectedCohortId)
 
     if (isLoading) {
         return (
-            <div className="space-y-6">
-                <div className="flex gap-4">
-                    <Skeleton className="h-10 w-[200px] bg-surface" />
-                    <Skeleton className="h-10 w-[200px] bg-surface" />
+            <div className="space-y-6 animate-fade-in">
+                <div className="flex gap-3">
+                    <Skeleton className="h-9 w-[180px] bg-surface rounded-md" />
+                    <Skeleton className="h-9 w-[180px] bg-surface rounded-md" />
                 </div>
-                <div className="flex gap-6 overflow-x-auto pb-4">
-                    {[1, 2, 3, 4, 5].map(i => <Skeleton key={i} className="h-[600px] w-[280px] bg-surface" />)}
+                <div className="flex gap-4 overflow-x-auto pb-4">
+                    {[1, 2, 3, 4, 5].map(i => <Skeleton key={i} className="h-[560px] w-[272px] bg-surface rounded-lg shrink-0" />)}
                 </div>
             </div>
         )
     }
 
     return (
-        <div className="space-y-6 font-inter h-full flex flex-col">
+        <div className="space-y-5 font-inter h-full flex flex-col animate-fade-in">
             <div className="flex flex-wrap items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl font-semibold text-text-primary tracking-tight">Deal Pipeline</h1>
-                    <p className="text-sm text-text-muted mt-1">Manage and track company progress through stages.</p>
+                    <h1 className="page-title">Deal Pipeline</h1>
+                    <p className="page-subtitle">Drag and drop to move companies through stages.</p>
                 </div>
 
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-3">
                     <Select value={selectedProgramId} onValueChange={setSelectedProgramId}>
-                        <SelectTrigger className="w-[200px] bg-surface border-border">
+                        <SelectTrigger className="w-[180px] h-9 bg-surface border-border text-[13px]">
                             <SelectValue placeholder="Select Program" />
                         </SelectTrigger>
                         <SelectContent>
@@ -86,7 +83,7 @@ export default function PipelinePage() {
                     </Select>
 
                     <Select value={selectedCohortId} onValueChange={setSelectedCohortId}>
-                        <SelectTrigger className="w-[200px] bg-surface border-border">
+                        <SelectTrigger className="w-[180px] h-9 bg-surface border-border text-[13px]">
                             <SelectValue placeholder="Select Cohort" />
                         </SelectTrigger>
                         <SelectContent>
