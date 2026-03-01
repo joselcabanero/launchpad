@@ -100,7 +100,7 @@ export function AppSidebar() {
                 </SidebarGroup>
             </SidebarContent>
 
-            <SidebarFooter className="p-4 border-t border-[#2A2A2A]">
+            <SidebarFooter className="p-4 border-t border-sidebar-hover">
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton asChild tooltip="Settings" className="text-sidebar-text-muted hover:bg-sidebar-hover hover:text-sidebar-text h-10">

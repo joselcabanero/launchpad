@@ -3,6 +3,7 @@
 import React, { useRef, useEffect } from 'react'
 import * as d3 from 'd3'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { colors } from '@/lib/colors'
 
 interface RadarData {
     axis: string
@@ -48,7 +49,7 @@ export default function ScoreRadar({ data }: { data: RadarData[] }) {
                 .attr('y1', (_d, i) => levelFactor * Math.sin(angleSlice * i - Math.PI / 2))
                 .attr('x2', (_d, i) => levelFactor * Math.cos(angleSlice * (i + 1) - Math.PI / 2))
                 .attr('y2', (_d, i) => levelFactor * Math.sin(angleSlice * (i + 1) - Math.PI / 2))
-                .style('stroke', '#F0E8D0')
+                .style('stroke', colors.border)
                 .style('stroke-width', '0.5px')
         }
 
@@ -64,7 +65,7 @@ export default function ScoreRadar({ data }: { data: RadarData[] }) {
             .attr('y1', 0)
             .attr('x2', (_d, i) => radius * Math.cos(angleSlice * i - Math.PI / 2))
             .attr('y2', (_d, i) => radius * Math.sin(angleSlice * i - Math.PI / 2))
-            .style('stroke', '#F0E8D0')
+            .style('stroke', colors.border)
             .style('stroke-width', '1px')
 
         axis.append('text')
@@ -76,7 +77,7 @@ export default function ScoreRadar({ data }: { data: RadarData[] }) {
             .style('font-family', 'Inter')
             .style('font-size', '9px')
             .style('font-weight', '600')
-            .style('fill', '#6B5C4E')
+            .style('fill', colors.textMuted)
             .style('text-transform', 'uppercase')
 
         // Radar line
@@ -88,9 +89,9 @@ export default function ScoreRadar({ data }: { data: RadarData[] }) {
         const radarArea = g.append('path')
             .datum(data)
             .attr('d', radarLine)
-            .style('fill', '#FFA103')
+            .style('fill', colors.accentPrimary)
             .style('fill-opacity', 0)
-            .style('stroke', '#FFA103')
+            .style('stroke', colors.accentPrimary)
             .style('stroke-width', '2px')
 
         radarArea.transition()
@@ -106,7 +107,7 @@ export default function ScoreRadar({ data }: { data: RadarData[] }) {
             .attr('r', 4)
             .attr('cx', (_d, i) => rScale(_d.value) * Math.cos(angleSlice * i - Math.PI / 2))
             .attr('cy', (_d, i) => rScale(_d.value) * Math.sin(angleSlice * i - Math.PI / 2))
-            .style('fill', '#FFA103')
+            .style('fill', colors.accentPrimary)
             .style('fill-opacity', 0.8)
             .style('opacity', 0)
             .transition()

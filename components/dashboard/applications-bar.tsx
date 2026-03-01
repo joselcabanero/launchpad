@@ -3,6 +3,7 @@
 import React, { useRef, useEffect } from 'react'
 import * as d3 from 'd3'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { colors } from '@/lib/colors'
 
 interface BarData {
     name: string
@@ -44,14 +45,14 @@ export default function ApplicationsBar({ data }: { data: BarData[] }) {
             .selectAll('text')
             .style('font-family', 'Inter')
             .style('font-size', '10px')
-            .style('color', '#6B5C4E')
+            .style('color', colors.textMuted)
 
         g.append('g')
             .call(d3.axisLeft(y).tickSize(0))
             .selectAll('text')
             .style('font-family', 'Inter')
             .style('font-size', '11px')
-            .style('color', '#1E1E1E')
+            .style('color', colors.textPrimary)
 
         g.select('.domain').remove()
 
@@ -64,7 +65,7 @@ export default function ApplicationsBar({ data }: { data: BarData[] }) {
             .attr('y', d => y(d.name.substring(0, 20))!)
             .attr('height', y.bandwidth())
             .attr('x', 0)
-            .attr('fill', d => (d.count > 10 ? '#DE5533' : '#FFA103'))
+            .attr('fill', d => (d.count > 10 ? colors.accentSecondary : colors.accentPrimary))
             .attr('rx', 4)
 
         bars.transition()
@@ -85,7 +86,7 @@ export default function ApplicationsBar({ data }: { data: BarData[] }) {
             .style('font-family', 'Inter')
             .style('font-size', '12px')
             .style('font-weight', '600')
-            .style('fill', '#1E1E1E')
+            .style('fill', colors.textPrimary)
             .style('opacity', 0)
             .transition()
             .duration(300)

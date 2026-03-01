@@ -3,13 +3,12 @@
 import React, { useRef, useEffect } from 'react'
 import * as d3 from 'd3'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { colors, chartColors } from '@/lib/colors'
 
 interface FunnelData {
     stage: string
     count: number
 }
-
-const colors = ['#FFA103', '#DE5533', '#BC2D29', '#450E14', '#F5EACE']
 
 export default function PipelineFunnel({ data }: { data: FunnelData[] }) {
     const svgRef = useRef<SVGSVGElement>(null)
@@ -53,7 +52,7 @@ export default function PipelineFunnel({ data }: { data: FunnelData[] }) {
 
             g.append('polygon')
                 .attr('points', points)
-                .attr('fill', colors[i % colors.length])
+                .attr('fill', chartColors[i % chartColors.length])
                 .attr('opacity', 0)
                 .transition()
                 .duration(400)
@@ -65,7 +64,7 @@ export default function PipelineFunnel({ data }: { data: FunnelData[] }) {
                 .attr('x', xStart + stageWidth / 2)
                 .attr('y', height / 2)
                 .attr('text-anchor', 'middle')
-                .attr('fill', i < 4 ? 'white' : '#1E1E1E')
+                .attr('fill', i < 4 ? colors.textInverse : colors.textPrimary)
                 .style('font-family', 'Inter')
                 .style('font-weight', '700')
                 .style('font-size', '14px')
@@ -75,7 +74,7 @@ export default function PipelineFunnel({ data }: { data: FunnelData[] }) {
                 .attr('x', xStart + stageWidth / 2)
                 .attr('y', height / 2 + 20)
                 .attr('text-anchor', 'middle')
-                .attr('fill', i < 4 ? 'rgba(255,255,255,0.8)' : '#6B5C4E')
+                .attr('fill', i < 4 ? 'rgba(255,255,255,0.8)' : colors.textMuted)
                 .style('font-family', 'Inter')
                 .style('font-size', '10px')
                 .text(d.stage)
@@ -87,7 +86,7 @@ export default function PipelineFunnel({ data }: { data: FunnelData[] }) {
                     .attr('x', xEnd)
                     .attr('y', height / 2 - 30)
                     .attr('text-anchor', 'middle')
-                    .attr('fill', '#BC2D29')
+                    .attr('fill', colors.accentDanger)
                     .style('font-family', 'Inter')
                     .style('font-weight', '700')
                     .style('font-size', '11px')

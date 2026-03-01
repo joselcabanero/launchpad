@@ -3,13 +3,12 @@
 import React, { useRef, useEffect } from 'react'
 import * as d3 from 'd3'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { colors, chartColors } from '@/lib/colors'
 
 interface DonutData {
     label: string
     count: number
 }
-
-const colors = ['#FFA103', '#DE5533', '#BC2D29', '#450E14', '#F5EACE', '#6B5C4E']
 
 export default function StageDonut({ data }: { data: DonutData[] }) {
     const svgRef = useRef<SVGSVGElement>(null)
@@ -46,7 +45,7 @@ export default function StageDonut({ data }: { data: DonutData[] }) {
             .data(pie(data))
             .enter()
             .append('path')
-            .attr('fill', (_d, i) => colors[i % colors.length])
+            .attr('fill', (_d, i) => chartColors[i % chartColors.length])
             .attr('d', arc)
 
         path.transition()
@@ -63,7 +62,7 @@ export default function StageDonut({ data }: { data: DonutData[] }) {
             .text('Total')
             .style('font-family', 'Inter')
             .style('font-size', '12px')
-            .style('fill', '#6B5C4E')
+            .style('fill', colors.textMuted)
 
         g.append('text')
             .attr('text-anchor', 'middle')
@@ -72,7 +71,7 @@ export default function StageDonut({ data }: { data: DonutData[] }) {
             .style('font-family', 'Inter')
             .style('font-size', '28px')
             .style('font-weight', '700')
-            .style('fill', '#1E1E1E')
+            .style('fill', colors.textPrimary)
 
     }, [data])
 
@@ -88,7 +87,7 @@ export default function StageDonut({ data }: { data: DonutData[] }) {
                         <div key={item.label} className="flex items-center gap-2">
                             <div
                                 className="w-3 h-3 rounded-full"
-                                style={{ backgroundColor: colors[i % colors.length] }}
+                                style={{ backgroundColor: chartColors[i % chartColors.length] }}
                             />
                             <span className="text-[11px] text-text-muted">{item.label}</span>
                             <span className="text-[11px] font-bold text-text-primary ml-auto tabular-nums">{item.count}</span>
